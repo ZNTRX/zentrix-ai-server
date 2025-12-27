@@ -1,18 +1,20 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
+import requests
+import os
 
-app = Flask(__name__)
-CORS(app)
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-@app.route("/ai", methods=["POST"])
-def ai():
-    data = request.get_json()
-    prompt = data.get("prompt", "")
-    return jsonify({"text": f"[AI Zentrix] Am primit: {prompt}"})
+headers = {
+    "Authorization": f"Bearer {OPENAI_API_KEY}",
+    "Content-Type": "application/json"
+}
 
-@app.route("/")
-def home():
-    return "AI Zentrix server is running."
+payload = {
+    "model": "google/gemini-3-flash-preview",
+    "messages": [
+        {"role": "system", "content": "Vei vorbi ca un player Roblox român."},
+        {"role": "user", "content": prompt}
+    ]
+}
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=3000)
+r = requests.post("https://api.openai.com/v1/chat/completions", json=payload, headers=headers)
+response_text = r.json()["choices"][0]["message"]["content"]
