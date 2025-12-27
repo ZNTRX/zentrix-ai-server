@@ -33,8 +33,10 @@ def ai():
 
     try:
         ai_text = data_ai["choices"][0]["message"]["content"]
-    except:
-        ai_text = "Eroare la AI."
+   except Exception as e:
+    print("AI ERROR:", data_ai)
+    ai_text = "Eroare la AI."
+
 
     return jsonify({"text": ai_text})
 
